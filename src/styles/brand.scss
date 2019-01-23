@@ -1,0 +1,69 @@
+.brand{
+	padding: 20px;
+	.brand-content{
+		margin-top: 20px;
+	}
+	.brand-item{
+		height: 250px;
+    width: 210px;
+   	display: inline-block;
+   	margin-right: 30px;
+   	margin-bottom: 30px;
+	}
+	.el-message-box__headerbtn{
+		display: none;
+		z-index: 100;
+	}
+	.card{
+		background: #fff;
+		height: 100%;
+		width: 100%;
+		border: 1px solid #eff5fd;
+		border-radius: 5px;
+		box-sizing: border-box;
+		text-align: center;
+		position: relative;
+		transition: all .3s ease-in-out;
+		bottom: 0;
+		.el-message-box__headerbtn{
+			top: 5px;
+			right: 5px;
+		}
+		&:hover{
+			bottom: 6px;
+  		box-shadow: 0 6px 18px 0 rgba(232,237,250,.5);
+  		.el-message-box__headerbtn{
+  			display: block;
+  		}
+		}
+	}
+	.img{
+		width: 120px;
+		height: 120px;
+		margin: 40px 45px;
+		border-radius: 50%;
+		border: 1px solid #eff5fd;
+		overflow: hidden;
+		img{ border-radius: 50%; }
+	}
+	.brand-name{
+		height: 53px;
+    line-height: 52px;
+    font-size: 14px;
+    color: #20a0ff;
+    text-align: center;
+    border-top: 1px solid #eff5fd;
+    cursor: pointer;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    border-radius: 0 0 5px 5px;
+    transition: all .3s;
+		&:hover{
+			color: #fff;
+  		background: #20a0ff;
+		}
+	}
+}
