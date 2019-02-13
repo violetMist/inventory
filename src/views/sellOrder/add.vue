@@ -18,8 +18,8 @@
 	      placeholder="请选择出库时间">
 	    </el-date-picker>
 	  </el-form-item>
-	  <el-form-item label="发货人" prop="user">
-	    <el-select v-model="form.user" filterable placeholder="请选择发货人">
+	  <el-form-item label="填写人" prop="user">
+	    <el-select v-model="form.user" filterable placeholder="请选择填写人">
 	      <el-option
 	        v-for="item in userList"
 	        :key="item.key"
@@ -110,7 +110,7 @@
         editableTabs: [],
 				rules: {
 					user: [
-            { required: true, message: '请选择发货人', trigger: 'change' }
+            { required: true, message: '请选择填写人', trigger: 'change' }
           ],
           outTime: [
             { required: true, message: '请选择出库时间', trigger: 'change' }
@@ -130,7 +130,6 @@
         	  { required: true, message: '请选择仓库', trigger: 'change' }
         	],
         	price: [
-        	  { required: true, message: '请输入单价', trigger: 'blur' },
         	  { trigger: 'blur', validator: validatePositiveNumber }
         	],
         	number: [

@@ -46,6 +46,11 @@
 		      {{ scope.row.oldName }}
 		    </template>
 		  </el-table-column>
+		   <el-table-column align="center" label="单位" >
+		    <template slot-scope="scope">
+		      {{ getUnit(scope.row.unit) }}
+		    </template>
+		  </el-table-column>
 		  <el-table-column align="center" label="内径(mm)" >
 		    <template slot-scope="scope">
 		      <span>{{ scope.row.innerDiameter }}</span>
@@ -105,6 +110,16 @@
 			  <el-form-item label="国内旧型号" prop="oldName">
 			    <el-input v-model="form.oldName"></el-input>
 			  </el-form-item>
+			  <el-form-item label="单位" >
+			    <el-select v-model="form.unit"  placeholder="请选择单位">
+	  	 		  <el-option
+	  	 		    v-for="item in unitType"
+	  	 		    :key="item.key"
+	  	 		    :label="item.value"
+	  	 		    :value="item.key">
+	  	 		  </el-option>
+  	 			</el-select>
+			  </el-form-item>
 			  <el-form-item label="内径(mm)" prop="innerDiameter">
 			    <el-input v-model="form.innerDiameter"></el-input>
 			  </el-form-item>
@@ -153,23 +168,16 @@
           name: [
             { required: true, message: '请输入国内新型号', trigger: 'blur' }
           ],
-          oldName: [
-            { required: true, message: '请输入国内旧型号', trigger: 'blur' }
-          ],
           innerDiameter: [
-            { required: true, message: '请输入内径', trigger: 'blur' },
             { trigger: 'blur', validator: validatePositiveNumber }
           ],
           outsideDiameter: [
-            { required: true, message: '请输入外径', trigger: 'blur' },
             { trigger: 'blur', validator: validatePositiveNumber }
           ],
           width: [
-            { required: true, message: '请输入宽度', trigger: 'blur' },
             { trigger: 'blur', validator: validatePositiveNumber }
           ],
           weight: [
-            { required: true, message: '请输入重量', trigger: 'blur' },
             { trigger: 'blur', validator: validatePositiveNumber }
           ]
 				}
@@ -177,7 +185,8 @@
 		},
 		computed: {
 			...mapGetters([
-				'bearingType'
+				'bearingType',
+				'unitType'
 			]),
 			dialogTitle () {
 				return this.action == 0 ? '添加型号' : '编辑型号'
@@ -190,6 +199,14 @@
 			getStr (val) {
 				let str = ''
 				this.bearingType.forEach(b => {
+					if (b.key == val)
+						return str = b.value
+				})
+				return str
+			},
+			getUnit (val) {
+				let str = ''
+				this.unitType.forEach(b => {
 					if (b.key == val)
 						return str = b.value
 				})

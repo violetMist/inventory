@@ -34,11 +34,6 @@
           {{ scope.row.brandName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="供应商" >
-        <template slot-scope="scope">
-          {{ scope.row.commercialName }}
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="仓库">
         <template slot-scope="scope">
           {{ scope.row.storeName }}

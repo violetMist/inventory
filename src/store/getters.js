@@ -8,6 +8,7 @@ const getters = {
 	roles: state => state.user.roles,
 	systemRoles: state => state.util.systemRoles,
 	bearingType: state => state.util.bearingType,
+	unitType: state => state.util.unitType,
 	commercialType: state => state.util.commercialType,
 	permission_routers: state => state.permission.routers,
 	addRouters: state => state.permission.addRouters

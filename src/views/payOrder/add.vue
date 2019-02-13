@@ -8,16 +8,36 @@
 	      placeholder="请选择入库时间">
 	    </el-date-picker>
 	  </el-form-item>
-	  <el-form-item label="收货人" prop="user">
-	    <el-select v-model="form.user" filterable placeholder="请选择收货人">
+	  <el-form-item label="供应商" prop="commercial">
+	    <el-select v-model="form.commercial" filterable placeholder="请选择供应商">
 	      <el-option
-	        v-for="item in userList"
+	        v-for="item in commercialList"
 	        :key="item.key"
 	        :label="item.value"
 	        :value="item.key">
 	      </el-option>
 	    </el-select>
 	  </el-form-item>
+    <el-form-item label="仓库" prop="store">
+      <el-select v-model="form.store" filterable placeholder="请选择仓库">
+        <el-option
+          v-for="item in storeList"
+          :key="item.key"
+          :label="item.value"
+          :value="item.key">
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="填写人" prop="user">
+      <el-select v-model="form.user" filterable placeholder="请选择填写人">
+        <el-option
+          v-for="item in userList"
+          :key="item.key"
+          :label="item.value"
+          :value="item.key">
+        </el-option>
+      </el-select>
+    </el-form-item>
 		<el-tabs v-model="editableTabsValue" type="card" editable @edit="handleTabsEdit">
 		  <el-tab-pane
 		    :key="item.name"
@@ -50,32 +70,12 @@
 			        </el-option>
 			      </el-select>
 			    </el-form-item>
-			    <el-form-item label="供应商" prop="commercial">
-			      <el-select v-model="item.form.commercial" filterable placeholder="请选择供应商">
-			        <el-option
-			          v-for="item in commercialList"
-			          :key="item.key"
-			          :label="item.value"
-			          :value="item.key">
-			        </el-option>
-			      </el-select>
-			    </el-form-item>
-			    <el-form-item label="仓库" prop="store">
-			      <el-select v-model="item.form.store" filterable placeholder="请选择仓库">
-			        <el-option
-			          v-for="item in storeList"
-			          :key="item.key"
-			          :label="item.value"
-			          :value="item.key">
-			        </el-option>
-			      </el-select>
-			    </el-form-item>
-			    <el-form-item label="单价" prop="price">
-			      <el-input v-model="item.form.price" @change="blurFn(item.form)"></el-input>
-			    </el-form-item>
 			    <el-form-item label="数量" prop="number">
 			      <el-input v-model="item.form.number" @change="blurFn(item.form)"></el-input>
 			    </el-form-item>
+          <el-form-item label="单价" prop="price">
+            <el-input v-model="item.form.price" @change="blurFn(item.form)"></el-input>
+          </el-form-item>
 			    <el-form-item label="应付金额">
 			      <div class="in-pay">{{item.form.total}}</div>
 			    </el-form-item>
@@ -105,12 +105,20 @@
         tabIndex: 1,
         form: {
         	user: '',
+          commercial: '',
+          store: '',
         	inTime: ''
         },
         editableTabs: [],
 				rules: {
-					user: [
-            { required: true, message: '请选择收货人', trigger: 'change' }
+					commercial: [
+            { required: true, message: '请选择供应商', trigger: 'change' }
+          ],
+          store: [
+            { required: true, message: '请选择仓库', trigger: 'change' }
+          ],
+          user: [
+            { required: true, message: '请选择填写人', trigger: 'change' }
           ],
           inTime: [
             { required: true, message: '请选择入库时间', trigger: 'change' }
@@ -130,7 +138,6 @@
         	  { required: true, message: '请选择仓库', trigger: 'change' }
         	],
         	price: [
-        	  { required: true, message: '请输入单价', trigger: 'blur' },
         	  { trigger: 'blur', validator: validatePositiveNumber }
         	],
         	number: [
@@ -157,7 +164,9 @@
       fetchData () {
       	viewPayOrder(this.id).then(res => {
           this.form.id = res.data.id || ''
-      		this.form.user = res.data.user
+          this.form.user = res.data.user
+          this.form.commercial = res.data.commercial
+      		this.form.store = res.data.store
           this.form.inTime = res.data.inTime
           this.editableTabsValue = res.data.list.length + ''
           this.tabIndex = res.data.list.length
@@ -248,7 +257,7 @@
   	margin-top: 15px;
   }
   .app-form{
-    .el-tabs{ min-height: 319px; }
+    .el-tabs{ min-height: 200px; }
   }
   .order-id{
     margin: 20px 0 25px;

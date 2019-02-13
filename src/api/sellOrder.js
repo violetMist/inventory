@@ -26,16 +26,7 @@ export function addSellOrder(params) {
 		data: params
 	})
 }
-//编辑出库单
-export function editSellOrder(params) {
-	return request({
-		url: '/sellOrder/edit',
-		method: 'post',
-		data: params
-	})
-}
-
-//作废出库单
+//删除出库单
 export function delSellOrder(params) {
 	return request({
 		url: '/sellOrder/delete',

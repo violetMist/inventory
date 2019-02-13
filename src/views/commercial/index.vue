@@ -49,17 +49,7 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="联系人">
-        <template slot-scope="scope">
-          {{ scope.row.contacts }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="联系电话">
-        <template slot-scope="scope">
-          {{ scope.row.phone }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="地址" width="300">
+      <el-table-column align="center" label="地址" width="400">
         <template slot-scope="scope">
           {{ scope.row.address }}
         </template>
@@ -71,6 +61,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="150" align="center">
         <template slot-scope="scope">
+          <el-button v-if="hasPermission(31)" @click="showDialog(2, scope.row.id)" type="text" size="small">查看</el-button>
           <el-button v-if="hasPermission(33)" @click="showDialog(1, scope.row.id)" type="text" size="small">编辑</el-button>
           <el-button v-if="hasPermission(-1)" @click="delFn(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -90,38 +81,8 @@
       :visible.sync="dialogVisible"
       width="540px"
       >
-      <el-form class="app-form" ref="form" :model="form" :rules="rules" label-position="left" label-width="100px">
-        <el-form-item label="商户类型" prop="type">
-          <el-select v-model="form.type"  placeholder="请选择商户类型">
-            <el-option
-              v-for="item in commercialType"
-              :key="item.key"
-              :label="item.value"
-              :value="item.key">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="商户名称" prop="name">
-          <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="联系人" prop="contacts">
-          <el-input v-model="form.contacts"></el-input>
-        </el-form-item>
-        <el-form-item label="联系电话" prop="phone">
-          <el-input v-model="form.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="form.address"></el-input>
-        </el-form-item>
-        <el-form-item label="入驻时间" prop="enterTime">
-          <el-date-picker
-            v-model="form.enterTime"
-            type="date"
-            value-format="timestamp"
-            placeholder="请选择入驻时间">
-          </el-date-picker>
-        </el-form-item>
-      </el-form>
+      <add v-if="dialogVisible && (action == 0 || action == 1)" :id="id" @getForm="setForm"/>
+      <det v-if="dialogVisible && action == 2" :id="id" />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFn">确 定</el-button>
         <el-button @click="hideFn">取 消</el-button>
@@ -130,14 +91,16 @@
   </div>
 </template>
 <script>
-  import { getList, viewCommercial, addCommercial, editCommercial, delCommercial } from '@/api/commercial.js'
+  import { getList, addCommercial, editCommercial, delCommercial } from '@/api/commercial.js'
   import { mapGetters } from 'vuex'
   import { hasPermission } from '@/utils'
-  import { valiadatePhone } from '@/utils/validate'
+  import add from './add.vue'
+  import det from './det.vue'
 
   export default {
     data() {
       return {
+        id: '',
         hasPermission,
         action: 0,
         listQuery: { //查询条件
@@ -149,29 +112,7 @@
         total: 0,
         list: [],
         listLoading: true,
-        dialogVisible: false,
-        form: {},
-        rules: {
-          type: [
-            { required: true, message: '请选择商户类型', trigger: 'change' }
-          ],
-          name: [
-            { required: true, message: '请输入商户名称', trigger: 'blur' }
-          ],
-          contacts: [
-            { required: true, message: '请输入联系人', trigger: 'blur' }
-          ],
-          phone: [
-            { required: true, message: '请输入联系电话', trigger: 'blur' },
-            { trigger: 'blur', validator: valiadatePhone }
-          ],
-          address: [
-            { required: true, message: '请输入地址', trigger: 'blur' }
-          ],
-          enterTime: [
-            { required: true, message: '请选择入驻时间', trigger: 'change' }
-          ]
-        }
+        dialogVisible: false
       }
     },
     computed: {
@@ -179,8 +120,17 @@
         'commercialType'
       ]),
       dialogTitle () {
-        return this.action == 0 ? '添加商户' : '编辑商户'
+        if (this.action == 0)
+          return '添加商户'
+        else if (this.action == 1)
+          return '编辑商户'
+        else
+          return '查看商户'
       }
+    },
+    components: {
+      add,
+      det
     },
     created() {
       this.fetchData()
@@ -210,19 +160,16 @@
       changePage (val) {
         this.fetchData()
       },
-      showDialog (action, id) {  
-        this.action = action      
-        viewCommercial(id).then(res => {
-          this.form = res.data
-          this.dialogVisible = true
-          this.$nextTick(() => {
-            this.$refs.form.clearValidate(['type', 'enterTime'])
-          })
-        })
+      setForm (form) {
+        this.$refs.form = form
+      },
+      showDialog (action, id) {
+        this.action = action
+        this.id = id || ''
+        this.dialogVisible = true
       },
       hideFn () {
         this.dialogVisible = false
-        this.$refs.form.clearValidate()
       },
       delFn (id) {
         this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
@@ -242,19 +189,24 @@
       },
       submitFn () {
         let fn = this.action == 0 ? addCommercial : editCommercial
-        this.$refs.form.validate((valid) => {
-          if (valid) {
-            fn(this.form).then(res => {
-              this.$message({
-                message: res.message,
-                type: 'success',
-                duration: 3 * 1000
-              })
-              this.fetchData()
-              this.hideFn()
+        if (this.$refs.form.checkForm()) {
+          let req = this.$refs.form.getData()
+          fn(req).then(res => {
+            this.$message({
+              message: res.message,
+              type: 'success',
+              duration: 3 * 1000
             })
-          }
-        })
+            this.fetchData()
+            this.hideFn()
+          })
+        } else {
+          this.$message({
+            message: '表单中有错误信息，请校验后再提交',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       }
     }
   }

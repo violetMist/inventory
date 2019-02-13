@@ -13,8 +13,8 @@
         </el-select>
       </div>  
       <div class="tools-line">
-        <div class="label">发货人：</div>
-        <el-select clearable filterable v-model="listQuery.user" placeholder="请选择商户发货人">
+        <div class="label">填写人：</div>
+        <el-select clearable filterable v-model="listQuery.user" placeholder="请选择商户填写人">
           <el-option
             v-for="item in userList"
             :key="item.key"
@@ -74,7 +74,7 @@
           {{ scope.row.commercialName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="发货人">
+      <el-table-column align="center" label="填写人">
         <template slot-scope="scope">
           {{ scope.row.userName }}
         </template>
@@ -82,7 +82,7 @@
       <el-table-column fixed="right" label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button @click="showDialog(2, scope.row.id)" type="text" size="small">查看</el-button>
-          <el-button v-if="hasPermission(63)" @click="showDialog(1, scope.row.id)" type="text" size="small">编辑</el-button>
+          <el-button v-if="hasPermission(63)" @click="delFn(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -111,7 +111,7 @@
 </template>
 <script>
   import { list } from '@/api/utils.js'
-  import { getList, addSellOrder, editSellOrder, delSellOrder } from '@/api/sellOrder.js'
+  import { getList, addSellOrder, delSellOrder } from '@/api/sellOrder.js'
   import { hasPermission } from '@/utils'
   import add from './add.vue'
   import det from './det.vue'
@@ -143,8 +143,6 @@
       dialogTitle () {
         if (this.action == 0)
           return '创建出库单'
-        else if (this.action == 1)
-          return '编辑出库单'
         else
           return '查看出库单'
       }
@@ -194,7 +192,7 @@
         this.dialogVisible = false
       },
       delFn (id) {
-        this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该出库单, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -213,14 +211,13 @@
         this.$refs.form = form
       },
       submitFn () {
-        let fn = this.action == 0 ? addSellOrder : editSellOrder
         if (this.$refs.form.checkForm()) {
           let req = this.$refs.form.getData()
-          fn(req).then(res => {
+          addSellOrder(req).then(res => {
             this.$message({
               message: res.message,
               type: 'success',
-              duration: 3 * 1000
+              duration: 5 * 1000
             })
             this.fetchData()
             this.hideFn()

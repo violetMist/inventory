@@ -50,7 +50,7 @@ export function validatePositiveNumber(rule, value, callback) {
 
 /* 整数*/
 export function validateInteger(rule, value, callback) {
-  if (_.isNaN(Number(value)) || value % 1 !== 0 || value < 0) {
+  if (_.isNaN(Number(value)) || value % 1 !== 0 || value <= 0) {
     callback(new Error('请输入正整数'))
   } else {
     callback()

@@ -10,7 +10,7 @@
 	    <el-input v-model="form.account" :disabled="action != 0"></el-input>
 	  </el-form-item>
 	  <el-form-item label="登录密码" prop="password">
-	    <el-input v-model="form.password" :disabled="disable"></el-input>
+	    <el-input :type="pwdType" v-model="form.password" :disabled="disable"></el-input>
 	  </el-form-item>
 	  <div class="set-role" v-if="hasPermission(-1)">
 	  	{{ disable ? '用户权限' : '权限设置' }}
@@ -75,6 +75,9 @@
 			]),
 			disable () {
 				return this.action == 2
+			},
+			pwdType () {
+				return this.action == 2 ? 'password' : 'text'
 			},
 			rolesList () {
 				if (this.action > -1)

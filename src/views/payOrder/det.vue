@@ -5,8 +5,16 @@
 				<label>入库时间：</label>
 				<span>{{inTime}}</span>	
 			</div>
+      <div class="com">
+        <label>供应商：</label>
+        <span>{{commercialName}}</span> 
+      </div>
+      <div class="com">
+        <label>仓库：</label>
+        <span>{{storeName}}</span> 
+      </div>
 			<div class="com">
-				<label>收货人：</label>
+				<label>填写人：</label>
 				<span>{{userName}}</span>	
 			</div>
 		</div>
@@ -28,16 +36,6 @@
       <el-table-column align="center" label="品牌">
         <template slot-scope="scope">
           {{ scope.row.brandName }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="供应商" >
-        <template slot-scope="scope">
-          {{ scope.row.commercialName }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="仓库">
-        <template slot-scope="scope">
-          {{ scope.row.storeName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="单价">
@@ -68,6 +66,8 @@
     },
 		data () {
 			return {
+        storeName: '',
+        commercialName: '',
 				userName: '',
 				inTime: '',
         list: []
@@ -79,7 +79,9 @@
 		methods: {
       fetchData () {
       	viewPayOrder(this.id).then(res => {
-      		this.userName = res.data.userName
+          this.userName = res.data.userName
+          this.storeName = res.data.storeName
+      		this.commercialName = res.data.commercialName
       		this.inTime = this.$moment(res.data.inTime).format('YYYY-MM-DD hh:mm:ss')
       		this.list = res.data.list
       	})

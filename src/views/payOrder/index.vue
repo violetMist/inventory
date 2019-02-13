@@ -2,8 +2,19 @@
   <div class="app-container">
     <div class="table-tools">    
       <div class="tools-line">
-        <div class="label">收货人：</div>
-        <el-select clearable filterable v-model="listQuery.user" placeholder="请选择商户收货人">
+        <div class="label">供应商：</div>
+        <el-select clearable filterable v-model="listQuery.commercial" placeholder="请选择供应商">
+          <el-option
+            v-for="item in commercialList"
+            :key="item.key"
+            :label="item.value"
+            :value="item.key">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="tools-line">
+        <div class="label">填写人：</div>
+        <el-select clearable filterable v-model="listQuery.user" placeholder="请选择填写人">
           <el-option
             v-for="item in userList"
             :key="item.key"
@@ -58,7 +69,17 @@
           {{ getTime(scope.row.inTime) }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="收货人">
+      <el-table-column align="center" label="供应商">
+        <template slot-scope="scope">
+          {{ scope.row.commercialName }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="所在仓库">
+        <template slot-scope="scope">
+          {{ scope.row.storeName }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="填写人">
         <template slot-scope="scope">
           {{ scope.row.userName }}
         </template>
@@ -105,11 +126,13 @@
       return {
         id: '',
         hasPermission,
+        commercialList: [],
         userList: [],
         action: 0,
         listQuery: { //查询条件
           pageNo: 1, 
           pageSize: 10,
+          commercial: '',
           user: '',
           begin: '',
           end: ''
@@ -150,6 +173,7 @@
       },
       getUtils () {
         list().then(res => {
+          this.commercialList = res.data.commercialList
           this.userList = res.data.userList
         })
       },
@@ -175,7 +199,7 @@
         this.dialogVisible = false
       },
       delFn (id) {
-        this.$confirm('此操作将永久删除该商户, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该入库单, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
