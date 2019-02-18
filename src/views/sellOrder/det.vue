@@ -1,7 +1,7 @@
 <template>
 	<div class="sell-order-container">
 		<div class="common">
-      <div class="com">
+      <div class="com first">
         <label>买家：</label>
         <span>{{commercialName}}</span>  
       </div>
@@ -104,6 +104,9 @@
 			margin: 10px 0;
 			width: 280px;
 		}
+    .first{
+      width: 360px;
+    }
 		label{
 			display: inline-block;
 			width: 80px;

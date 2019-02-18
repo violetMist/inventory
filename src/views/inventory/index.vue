@@ -1,9 +1,20 @@
 <template>
   <div class="app-container">
-    <div class="table-tools">    
+    <div class="table-tools"> 
+      <div class="tools-line">
+        <div class="label">轴承类型：</div>
+        <el-select clearable filterable v-model="listQuery.type" placeholder="请选择轴承类型" @change="getVersion">
+          <el-option
+            v-for="item in bearingType"
+            :key="item.key"
+            :label="item.value"
+            :value="item.key">
+          </el-option>
+        </el-select>
+      </div>   
       <div class="tools-line">
         <div class="label">轴承型号：</div>
-        <el-select clearable filterable v-model="listQuery.version" placeholder="请选择商户型号">
+        <el-select clearable filterable v-model="listQuery.version" placeholder="请选择轴承型号">
           <el-option
             v-for="item in versionList"
             :key="item.key"
@@ -14,7 +25,7 @@
       </div>
       <div class="tools-line">
         <div class="label">品牌：</div>
-        <el-select clearable filterable v-model="listQuery.brand" placeholder="请选择商户品牌">
+        <el-select clearable filterable v-model="listQuery.brand" placeholder="请选择轴承品牌">
           <el-option
             v-for="item in brandList"
             :key="item.key"
@@ -82,8 +93,10 @@
   </div>
 </template>
 <script>
+  import { mapGetters } from 'vuex'
   import { list } from '@/api/utils.js'
   import { getList } from '@/api/inventory.js'
+  import { getList as getVersionList } from '@/api/version.js'
 
   export default {
     data() {
@@ -94,7 +107,8 @@
         listQuery: { //查询条件
           pageNo: 1, 
           pageSize: 10,
-          version: '', //型号
+          type: '',
+          version: '',
           brand: '',
           store: ''
         },
@@ -102,6 +116,11 @@
         list: [],
         listLoading: true
       }
+    },
+    computed: {
+      ...mapGetters([
+        'bearingType'
+      ])
     },
     created() {
       this.getUtils()
@@ -113,6 +132,17 @@
           this.brandList = res.data.brandList
           this.versionList = res.data.versionList
           this.storeList = res.data.storeList
+        })
+      },
+      getVersion (type) {
+        this.listQuery.version = null
+        getVersionList({type}).then(res => {
+          this.versionList = res.data.items.map(v => {
+            return {
+              key: v.id,
+              value: v.name
+            }
+          })
         })
       },
       fetchData() {
