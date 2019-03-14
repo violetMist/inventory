@@ -17,6 +17,7 @@
 				<label>填写人：</label>
 				<span>{{userName}}</span>	
 			</div>
+      <el-button :loading="downloadLoading" style="margin-top: 10px;" type="primary" size="small" @click="handleDownload">导出Excel</el-button>
 		</div>
 		<el-table
       :data="list"
@@ -38,14 +39,14 @@
           {{ scope.row.brandName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="单价">
-        <template slot-scope="scope">
-          {{ scope.row.price }}
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="数量">
         <template slot-scope="scope">
           {{ scope.row.number }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="单价">
+        <template slot-scope="scope">
+          {{ scope.row.price }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="金额">
@@ -66,6 +67,10 @@
     },
 		data () {
 			return {
+        downloadLoading: false,
+        filename: '',
+        autoWidth: true,
+        bookType: 'xlsx',
         storeName: '',
         commercialName: '',
 				userName: '',
@@ -85,6 +90,32 @@
       		this.inTime = this.$moment(res.data.inTime).format('YYYY-MM-DD HH:mm:ss')
       		this.list = res.data.list
       	})
+      },
+      handleDownload() {
+        this.downloadLoading = true
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['编号', '型号', '品牌', '数量']
+          const filterVal = ['id', 'versionName', 'brandName', 'number']
+          const list = this.list
+          const data = this.formatJson(filterVal, list)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: '入库单-' + this.commercialName + '-' + this.inTime,
+            autoWidth: this.autoWidth,
+            bookType: this.bookType
+          })
+          this.downloadLoading = false
+        })
+      },
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => {
+          if (j === 'timestamp') {
+            return this.$moment(v[j]).format('YYYY-MM-DD HH:mm:ss')
+          } else {
+            return v[j]
+          }
+        }))
       }
 		}
 	}
