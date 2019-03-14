@@ -82,7 +82,7 @@
           this.userName = res.data.userName
           this.storeName = res.data.storeName
       		this.commercialName = res.data.commercialName
-      		this.inTime = this.$moment(res.data.inTime).format('YYYY-MM-DD hh:mm:ss')
+      		this.inTime = this.$moment(res.data.inTime).format('YYYY-MM-DD HH:mm:ss')
       		this.list = res.data.list
       	})
       }

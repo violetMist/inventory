@@ -141,7 +141,7 @@
 	  	getTime (date) {
 	  		if (!date)
           return ''
-	  		return this.$moment(date).format('YYYY-MM-DD hh:mm:ss')
+	  		return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
 	  	},
 	    fetchData() {
 	      this.listLoading = true
@@ -158,6 +158,7 @@
 	    	this.action = action
     		viewUser(id).then(res => {
     			this.setForm(res.data)
+    			this.setRoles(res.data.roles)
     		})
 	    },
 	    setRoles (roles) {

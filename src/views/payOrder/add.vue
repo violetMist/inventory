@@ -19,7 +19,7 @@
 	    </el-select>
 	  </el-form-item>
     <el-form-item label="仓库" prop="store">
-      <el-select v-model="form.store" filterable placeholder="请选择仓库">
+      <el-select v-model="form.store" filterable placeholder="请选择仓库" @change="changeStore">
         <el-option
           v-for="item in storeList"
           :key="item.key"
@@ -51,7 +51,7 @@
             {{item.form.id.toUpperCase()}}
           </div>
 			    <el-form-item label="型号" prop="version">
-			      <el-select v-model="item.form.version" filterable placeholder="请选择型号">
+			      <el-select v-model="item.form.version" filterable placeholder="请选择型号" @change="changeFn(item.form)">
 			        <el-option
 			          v-for="item in versionList"
 			          :key="item.key"
@@ -61,7 +61,7 @@
 			      </el-select>
 			    </el-form-item>
 			    <el-form-item label="品牌" prop="brand">
-			      <el-select v-model="item.form.brand" filterable placeholder="请选择品牌">
+			      <el-select v-model="item.form.brand" filterable placeholder="请选择品牌" @change="changeFn(item.form)">
 			        <el-option
 			          v-for="item in brandList"
 			          :key="item.key"
@@ -76,6 +76,9 @@
           <el-form-item label="单价" prop="price">
             <el-input v-model="item.form.price" @change="blurFn(item.form)"></el-input>
           </el-form-item>
+          <el-form-item label="库存数量">
+            <div class="in-pay">{{item.form.stock}}</div>
+          </el-form-item>
 			    <el-form-item label="应付金额">
 			      <div class="in-pay">{{item.form.total}}</div>
 			    </el-form-item>
@@ -88,6 +91,7 @@
 <script>
 	import { list } from '@/api/utils.js'
 	import { viewPayOrder } from '@/api/payOrder.js'
+  import { getNumber } from '@/api/inventory.js'
 	import { validateInteger, validatePositiveNumber } from '@/utils/validate'
 
 	export default {
@@ -174,7 +178,9 @@
             return {
               title: 'Tab' + (idx + 1),
               name: idx + 1 + '',
-              form: r
+              form: Object.assign({}, r, {
+                stock: 0
+              })
             }
           })
       		this.$nextTick(() => {
@@ -208,6 +214,20 @@
       	})
       	return isOK
       },
+      changeFn (form) {
+        if (this.form.store && form.version && form.brand)
+          getNumber({
+            store: this.form.store,
+            version: form.version,
+            brand: form.brand
+          }).then(res => {
+            form.stock = res.data.stock
+          })
+      },
+      changeStore (val) {
+        let currentForm = this.editableTabs[this.editableTabsValue - 1].form
+        this.changeFn(currentForm)
+      },
       getData() {
       	return Object.assign({}, this.form, {
       		list: this.editableTabs.map(r => r.form)
@@ -220,7 +240,9 @@
           	this.editableTabs.push({
 	            title: 'New Tab',
 	            name: newTabName,
-	            form: res.data.list[0]
+	            form: Object.assign({}, res.data.list[0], {
+                stock: 0
+              })
 	          });
           	this.editableTabsValue = newTabName
 	      	})  

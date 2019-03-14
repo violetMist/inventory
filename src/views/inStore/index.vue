@@ -96,7 +96,7 @@
           {{ scope.row.brandName }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="供应商">
+      <el-table-column align="center" label="供应商" width="300">
         <template slot-scope="scope">
           {{ scope.row.commercialName }}
         </template>
@@ -176,7 +176,7 @@
       getTime (date) {
         if (!date)
           return ''
-        return this.$moment(date).format('YYYY-MM-DD hh:mm:ss')
+        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
       getUtils () {
         list().then(res => {

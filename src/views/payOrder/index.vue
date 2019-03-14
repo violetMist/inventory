@@ -169,7 +169,7 @@
       getTime (date) {
         if (!date)
           return ''
-        return this.$moment(date).format('YYYY-MM-DD hh:mm:ss')
+        return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
       },
       getUtils () {
         list().then(res => {

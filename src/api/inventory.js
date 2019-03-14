@@ -8,3 +8,12 @@ export function getList(params) {
 		params: params
 	})
 }
+
+//获取库存数量
+export function getNumber(params) {
+	return request({
+		url: '/inventory/getNumber',
+		method: 'get',
+		params: params
+	})
+}

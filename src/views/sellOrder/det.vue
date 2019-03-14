@@ -81,7 +81,7 @@
       	viewSellOrder(this.id).then(res => {
       		this.userName = res.data.userName
           this.commercialName = res.data.commercialName
-      		this.outTime = this.$moment(res.data.outTime).format('YYYY-MM-DD hh:mm:ss')
+      		this.outTime = this.$moment(res.data.outTime).format('YYYY-MM-DD HH:mm:ss')
       		this.list = res.data.list
       	})
       }
