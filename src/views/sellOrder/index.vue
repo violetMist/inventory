@@ -82,7 +82,8 @@
       <el-table-column fixed="right" label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button @click="showDialog(2, scope.row.id)" type="text" size="small">查看</el-button>
-          <el-button v-if="hasPermission(63)" @click="delFn(scope.row.id)" type="text" size="small">删除</el-button>
+          <el-button v-if="hasPermission(63)" @click="showDialog(1, scope.row.id)" type="text" size="small">编辑</el-button>
+          <el-button v-if="hasPermission(6)" @click="delFn(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -111,7 +112,7 @@
 </template>
 <script>
   import { list } from '@/api/utils.js'
-  import { getList, addSellOrder, delSellOrder } from '@/api/sellOrder.js'
+  import { getList, addSellOrder, editSellOrder, delSellOrder } from '@/api/sellOrder.js'
   import { hasPermission } from '@/utils'
   import add from './add.vue'
   import det from './det.vue'
@@ -143,6 +144,8 @@
       dialogTitle () {
         if (this.action == 0)
           return '创建出库单'
+        else if (this.action == 1)
+          return '编辑出库单'
         else
           return '查看出库单'
       }
@@ -213,7 +216,8 @@
       submitFn () {
         if (this.$refs.form.checkForm()) {
           let req = this.$refs.form.getData()
-          addSellOrder(req).then(res => {
+          let fn = this.action == 0 ? addSellOrder : editSellOrder
+          fn(req).then(res => {
             this.$message({
               message: res.message,
               type: 'success',

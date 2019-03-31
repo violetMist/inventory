@@ -8,7 +8,7 @@ export function getList(params) {
 		params: params
 	})
 }
-//获取单个出库单信息
+//获取单个出库单信息。
 export function viewSellOrder(id) {
 	return request({
 		url: '/sellOrder/view',
@@ -26,6 +26,15 @@ export function addSellOrder(params) {
 		data: params
 	})
 }
+//编辑出库单
+export function editSellOrder(params) {
+	return request({
+		url: '/sellOrder/edit',
+		method: 'post',
+		data: params
+	})
+}
+
 //删除出库单
 export function delSellOrder(params) {
 	return request({

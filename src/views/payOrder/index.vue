@@ -88,6 +88,7 @@
         <template slot-scope="scope">
           <el-button @click="showDialog(2, scope.row.id)" type="text" size="small">查看</el-button>
           <el-button v-if="hasPermission(53)" @click="showDialog(1, scope.row.id)" type="text" size="small">编辑</el-button>
+          <el-button v-if="hasPermission(6)" @click="delFn(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
