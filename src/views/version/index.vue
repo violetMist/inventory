@@ -3,7 +3,8 @@
 		<div class="table-tools">
       <div class="tools-line">
 				<div class="label">轴承类型：</div>
-				<el-select v-model="listQuery.type"  placeholder="请选择轴承类型" clearable>
+				<el-select v-model="listQuery.type"  placeholder="请选择轴承类型" clearable
+				@change="getVersion">
   	 		  <el-option
   	 		    v-for="item in bearingType"
   	 		    :key="item.key"
@@ -12,6 +13,17 @@
   	 		  </el-option>
   	 		</el-select>
 			</div>
+			<div class="tools-line">
+        <div class="label">轴承型号：</div>
+        <el-select clearable filterable v-model="listQuery.version" placeholder="请选择轴承型号">
+          <el-option
+            v-for="item in versionList"
+            :key="item.key"
+            :label="item.value"
+            :value="item.key">
+          </el-option>
+        </el-select>
+      </div>
       <div class="tools-line">
 				<el-button type="primary" size="small" plain @click="fetchData">筛选</el-button>
 			</div>
@@ -142,6 +154,7 @@
 </template>
 <script>
 	import { mapGetters } from 'vuex'
+	import { list } from '@/api/utils.js'
 	import { getList, viewVersion, addVersion, editVersion, delVersion } from '@/api/version'
 	import { validatePositiveNumber } from '@/utils/validate'
 	import { hasPermission } from '@/utils'
@@ -154,10 +167,12 @@
 				total: 0,
 				list: [],
 				dialogVisible: false,
+				versionList: [],
 				listQuery: {
 					pageNo: 1,
 					pageSize: 10,
-					type: ''
+					type: '',
+					version: ''
 				},
 				listLoading: false,
 				form: {},
@@ -193,6 +208,7 @@
 			}
 		},
 		created() {
+			this.getUtils()
 	    this.fetchData()
 	  },
 		methods: {
@@ -212,6 +228,22 @@
 				})
 				return str
 			},
+			getUtils () {
+        list().then(res => {
+          this.versionList = res.data.versionList
+        })
+      },
+			getVersion (type) {
+        this.listQuery.version = null
+        getList({type}).then(res => {
+          this.versionList = res.data.items.map(v => {
+            return {
+              key: v.id,
+              value: v.name
+            }
+          })
+        })
+      },
 			fetchData () {
 				this.listLoading = true
 				getList(this.listQuery).then(res => {
